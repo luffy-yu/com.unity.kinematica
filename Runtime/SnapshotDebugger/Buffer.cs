@@ -119,6 +119,20 @@ namespace Unity.SnapshotDebugger
             return new NativeSlice<byte>(bytes.AsArray(), startOffset, size);
         }
 
+        // public T ReadBlittable<T>() where T : struct
+        // {
+        //     T val;
+        //
+        //     unsafe
+        //     {
+        //         int size = UnsafeUtility.SizeOf<T>();
+        //         NativeSlice<byte> bytes = ReadSlice(size);
+        //
+        //         val = UnsafeUtilityEx.AsRef<T>((void*)((byte*)bytes.GetUnsafePtr()));
+        //     }
+        //
+        //     return val;
+        // }
         public T ReadBlittable<T>() where T : struct
         {
             T val;
@@ -128,7 +142,7 @@ namespace Unity.SnapshotDebugger
                 int size = UnsafeUtility.SizeOf<T>();
                 NativeSlice<byte> bytes = ReadSlice(size);
 
-                val = UnsafeUtilityEx.AsRef<T>((void*)((byte*)bytes.GetUnsafePtr()));
+                val = UnsafeUtility.AsRef<T>((void*)((byte*)bytes.GetUnsafePtr()));
             }
 
             return val;
