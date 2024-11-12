@@ -307,11 +307,21 @@ namespace Unity.SnapshotDebugger
             buffer.Write(value.b);
             buffer.Write(value.a);
         }
-
-        public static void Write(this Buffer buffer, NativeString64 value)
+        
+        public static void Write(this Buffer buffer, FixedString64Bytes value)
         {
-            buffer.WriteBlittable(value.LengthInBytes);
-            buffer.WriteBlittable(value.buffer);
+            // Write the length of the FixedString64Bytes
+            buffer.WriteBlittable((ushort)value.Length);
+
+            // Write the actual bytes of the FixedString64Bytes
+            unsafe
+            {
+                byte* valuePtr = (byte*)value.GetUnsafePtr();
+                for (int i = 0; i < value.Length; i++)
+                {
+                    buffer.WriteBlittable(valuePtr[i]);
+                }
+            }
         }
 
         /// <summary>
@@ -441,7 +451,27 @@ namespace Unity.SnapshotDebugger
             buffer.Append(bytes);
         }
 
-        public static void WriteNativeList<T>(this Buffer buffer, NativeList<T> list, Allocator allocator) where T : struct
+        // public static void WriteNativeList<T>(this Buffer buffer, NativeList<T> list, Allocator allocator) where T : struct
+        // {
+        //     buffer.Write((int)allocator);
+        //
+        //     if (allocator == Allocator.Invalid)
+        //     {
+        //         return;
+        //     }
+        //
+        //     buffer.Write(list.Length);
+        //
+        //     int elemSize;
+        //     unsafe
+        //     {
+        //         elemSize = UnsafeUtility.SizeOf<T>();
+        //     }
+        //
+        //     NativeArray<byte> bytes = list.AsArray().Reinterpret<byte>(elemSize);
+        //     buffer.Append(bytes);
+        // }
+        public static void WriteNativeList<T>(this Buffer buffer, NativeList<T> list, Allocator allocator) where T : unmanaged
         {
             buffer.Write((int)allocator);
 
@@ -462,10 +492,27 @@ namespace Unity.SnapshotDebugger
             buffer.Append(bytes);
         }
 
-        /// <summary>
-        /// Writes a native list to the buffer.
-        /// </summary>
-        public static unsafe void WriteToStream<T>(this NativeList<T> nativeList, Buffer buffer) where T : struct
+        // /// <summary>
+        // /// Writes a native list to the buffer.
+        // /// </summary>
+        // public static unsafe void WriteToStream<T>(this NativeList<T> nativeList, Buffer buffer) where T : struct
+        // {
+        //     int numElements = nativeList.Length;
+        //     buffer.Write(numElements);
+        //     if (numElements > 0)
+        //     {
+        //         var numBytes = numElements * UnsafeUtility.SizeOf<T>();
+        //         var byteArray = new byte[numBytes];
+        //         fixed(byte* dst = &byteArray[0])
+        //         {
+        //             UnsafeUtility.MemCpy(dst,
+        //                 NativeListUnsafeUtility.GetUnsafePtr(nativeList),
+        //                 byteArray.Length);
+        //         }
+        //         buffer.Write(byteArray);
+        //     }
+        // }
+        public static unsafe void WriteToStream<T>(this NativeList<T> nativeList, Buffer buffer) where T : unmanaged
         {
             int numElements = nativeList.Length;
             buffer.Write(numElements);

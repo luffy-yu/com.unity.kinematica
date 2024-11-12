@@ -1,5 +1,18 @@
 # Kinematica (com.unity.kinematica)
 
+
+## This is forked from [com.unity.kinematica](https://github.com/needle-mirror/com.unity.kinematica.git).
+<hr/>
+
+### It has been adapted to Unity 2022.3.44f1 as the original one only supports Unity 2019.3.
+
+### Install via `Add package from git URL...`
+
+> https://github.com/luffy-yu/com.unity.kinematica.git
+
+<hr />
+
+# Original README.md 
 ![Kinematica](/Documentation~/images/kinematica-banner.png "Kinematica")
 
 Kinematica is a next-generation character animation system.
