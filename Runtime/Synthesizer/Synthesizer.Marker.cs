@@ -87,12 +87,10 @@ namespace Unity.Kinematica
                         byte* payloadPtr =
                             (byte*)binary.payloads.GetUnsafePtr() +
                             trait.payload;
-                        
-                        fixed (MotionSynthesizer* synthesizerPtr = &this)
-                        {
-                            functionPointer.Invoke(
-                                ref UnsafeUtility.AsRef<Any>(payloadPtr), synthesizerPtr);
-                        }
+
+                        functionPointer.Invoke(
+                            ref UnsafeUtility.AsRef<Any>(
+                                payloadPtr), ref this);
                     }
                 }
             }
